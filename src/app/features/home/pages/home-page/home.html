@@ -1,0 +1,22 @@
+<app-main-layout>
+  <div nz-flex nzVertical="true" nzGap="middle">
+    <div nz-flex nzJustify="space-between">
+      <div class="item-flex">
+        <nz-input-search nzAllowClear (nzSearch)="onSearch($event)">
+          <input nz-input [(ngModel)]="value" placeholder="Поиск" />
+        </nz-input-search>
+      </div>
+
+      <div class="item-flex">
+        <button nz-button nzType="primary" (click)="showCreateModal()">
+          <span>Show Modal</span>
+        </button>
+      </div>
+    </div>
+
+    <app-table [dataSet]="dataSet" [loading]="tableLoading" [pageSize]="pageSize" [pageIndex]="pageIndex"></app-table>
+  </div>
+
+
+  <app-create-modal [(ngModel)]="isCreateModal" (closeModal)="closeCreateModal()" (create)="onCreate($event)"></app-create-modal>
+</app-main-layout>

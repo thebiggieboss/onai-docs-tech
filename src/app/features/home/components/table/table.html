@@ -1,0 +1,31 @@
+<ng-template [ngIf]="!!data.length">
+  <nz-table #basicTable
+            [nzData]="data" [nzFrontPagination]="false"
+            [nzLoading]="loading()"
+            [nzTotal]="total"
+            [nzPageSize]="pageSize()"
+            [nzPageIndex]="pageIndex()"
+            (nzQueryParams)="onQueryParamsChange($event)">
+    <thead class="ant-table-thead ng-star-inserted">
+    <tr class="ant-table-row ng-star-inserted">
+      <th class="ant-table-cell">Название</th>
+      <th class="ant-table-cell">Назначение</th>
+      <th class="ant-table-cell">Статус</th>
+      <th class="ant-table-cell">Время</th>
+    </tr>
+    </thead>
+    <tbody class="ant-table-tbody ng-star-inserted">
+
+      @for (data of basicTable.data; track data) {
+        <tr class="ant-table-row ng-star-inserted">
+          <td class="ant-table-cell">{{ data.title }}</td>
+          <td class="ant-table-cell">{{ data.content }}</td>
+          <td class="ant-table-cell">{{ data.status }}</td>
+          <td class="ant-table-cell">
+            {{ data.updatedAt}}
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</ng-template>

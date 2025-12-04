@@ -1,0 +1,40 @@
+<nz-modal
+  [(nzVisible)]="value"
+  nzTitle="Создания"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="submitForm()"
+  [nzOkLoading]="isOkLoading"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="validateForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="title">Заголовок</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Заполните поле!">
+          <input nz-input formControlName="title" placeholder="Заголовок"/>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="content">Назначене</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Заполните поле!">
+          <input nz-input formControlName="content" placeholder="Назначене" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzRequired>Тип документа</nz-form-label>
+        <nz-form-control [nzSpan]="14"  nzErrorTip="Заполните поле!">
+          <nz-select name="select-validate" formControlName="type" nzPlaceHolder="Тип документа">
+            <nz-option nzValue="Option 1" nzLabel="АВР"></nz-option>
+            <nz-option nzValue="Option 2" nzLabel="СНО"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired>Дата</nz-form-label>
+        <nz-form-control [nzSm]="16" [nzXs]="24" nzErrorTip="Заполните поле!">
+          <nz-date-picker formControlName="datePicker" nzPlaceHolder="Дата"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
