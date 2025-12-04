@@ -6,6 +6,7 @@ import {
   loadDocumentsFailure,
   loadDocumentsSuccess,
   loadDocumentSuccess,
+  resetDocumentsState,
 } from '@features/home/store/documents.actions';
 import { DocumentState } from '@features/home/interfaces/home.interface';
 import { createDocumentSuccess } from '@features/home/store/create.actions';
@@ -79,4 +80,15 @@ export const documentsReducer = createReducer(
       total: state.list.total + 1,
     },
   })),
+
+  on(resetDocumentsState, (state, { resetFields }) => {
+    if (!resetFields) {
+      return initialState;
+    }
+
+    return {
+      ...state,
+      ...resetFields,
+    };
+  }),
 );

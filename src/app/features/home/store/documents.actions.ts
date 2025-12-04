@@ -1,5 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { DocumentDto } from '@shared/dto/document-dto.interface';
+import { DocumentState } from '@features/home/interfaces/home.interface';
 
 export const loadDocuments = createAction(
   '[Documents] Load Documents',
@@ -26,4 +27,9 @@ export const loadDocumentSuccess = createAction(
 export const loadDocumentFailure = createAction(
   '[Documents] Load Document Failure',
   props<{ error: string }>(),
+);
+
+export const resetDocumentsState = createAction(
+  '[Documents] Reset State',
+  props<{ resetFields?: Partial<DocumentState> }>(),
 );

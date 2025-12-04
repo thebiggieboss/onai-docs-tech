@@ -16,6 +16,7 @@
       <th class="ant-table-cell">Назначение</th>
       <th class="ant-table-cell">Статус</th>
       <th class="ant-table-cell">Время</th>
+      <th class="ant-table-cell">Действия</th>
     </tr>
     </thead>
     <tbody class="ant-table-tbody ng-star-inserted">
@@ -27,6 +28,10 @@
           <td class="ant-table-cell">{{ data.status }}</td>
           <td class="ant-table-cell">
             {{ data.updatedAt}}
+          </td>
+
+          <td  class="ant-table-cell" (click)="change(data.id)">
+            <a>Редактировать</a>
           </td>
         </tr>
       }

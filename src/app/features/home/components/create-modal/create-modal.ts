@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, output } from '@angular/core';
+import { Component, forwardRef, inject, input, OnInit, output } from '@angular/core';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import {
   ControlValueAccessor,
@@ -15,6 +15,7 @@ import { Subject } from 'rxjs';
 import { NzTimePickerModule } from 'ng-zorro-antd/time-picker';
 import { NzDatePickerComponent } from 'ng-zorro-antd/date-picker';
 import { ICreateProps } from '@features/home/interfaces/create.interface';
+import { DocumentDto } from '@shared/dto/document-dto.interface';
 
 @Component({
   selector: 'app-create-modal',
@@ -38,7 +39,8 @@ import { ICreateProps } from '@features/home/interfaces/create.interface';
     },
   ],
 })
-export class CreateModal implements ControlValueAccessor {
+export class CreateModal implements ControlValueAccessor, OnInit {
+  fillData = input<DocumentDto>(null);
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
 
@@ -47,6 +49,7 @@ export class CreateModal implements ControlValueAccessor {
 
   closeModal = output<void>();
   create = output<ICreateProps>();
+  update = output<ICreateProps>();
 
   validateForm = this.fb.group({
     title: this.fb.control('', Validators.required),
@@ -97,6 +100,10 @@ export class CreateModal implements ControlValueAccessor {
 
   submitForm(): void {
     if (this.validateForm.valid) {
+      if (this.fillData() !== null) {
+        this.update.emit(this.formData);
+        return;
+      }
       this.create.emit(this.formData);
     } else {
       Object.values(this.validateForm.controls).forEach((control) => {
@@ -104,6 +111,17 @@ export class CreateModal implements ControlValueAccessor {
           control.markAsDirty();
           control.updateValueAndValidity({ onlySelf: true });
         }
+      });
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.fillData() !== null) {
+      const { title, content, updatedAt } = this.fillData();
+      this.validateForm.patchValue({
+        title,
+        content,
+        datePicker: updatedAt ? new Date(updatedAt) : null,
       });
     }
   }

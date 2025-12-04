@@ -18,6 +18,7 @@ export class Table {
   total = input.required<number>();
 
   onPagination = output<ITablePagination>();
+  onChange = output<number>();
 
   get data(): DocumentDto[] {
     return this.dataSet();
@@ -26,5 +27,9 @@ export class Table {
   onQueryParamsChange(params: NzTableQueryParams): void {
     const { pageIndex, pageSize } = params;
     this.onPagination.emit({ pageIndex, pageSize });
+  }
+
+  change(id: number): void {
+    this.onChange.emit(id);
   }
 }

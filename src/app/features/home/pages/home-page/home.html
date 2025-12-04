@@ -21,9 +21,17 @@
       [pageSize]="pageSize"
       [pageIndex]="pageIndex"
       [total]="tableTotal$ | async"
-      (onPagination)="onPageSizeChange($event)"></app-table>
+      (onPagination)="onPageSizeChange($event)"
+      (onChange)="onChangeDocument($event)"></app-table>
   </div>
 
 
-  <app-create-modal [(ngModel)]="isCreateModal" (closeModal)="closeCreateModal()" (create)="onCreate($event)"></app-create-modal>
+  <ng-template [ngIf]="isCreateModal">
+    <app-create-modal
+      [fillData]="document$ | async"
+      [(ngModel)]="isCreateModal"
+      (closeModal)="closeCreateModal()"
+      (create)="onCreate($event)"
+      (update)="onUpdate($event)"></app-create-modal>
+  </ng-template>
 </app-main-layout>

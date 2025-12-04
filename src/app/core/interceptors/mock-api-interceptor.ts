@@ -3,6 +3,7 @@ import { ILogin, ILoginResponse } from '@app/shared/interfaces/auth-http.interfa
 import { from, of, switchMap, throwError } from 'rxjs';
 import { DocumentResponse } from '@features/home/interfaces/home.interface';
 import { DocumentDto } from '@shared/dto/document-dto.interface';
+import { ICreateProps } from '@features/home/interfaces/create.interface';
 
 let mockDocuments: DocumentResponse | null = null;
 let nextId = 1;
@@ -100,22 +101,54 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   if (req.url.endsWith('/documents') && req.method === 'POST') {
-    const form = req.body as Partial<DocumentDto>;
+    const form = req.body as ICreateProps;
 
     return from(loadDocuments()).pipe(
       switchMap((data) => {
+        const formatted = form.datePicker.toISOString().split('T')[0];
         const newDoc: DocumentDto = {
           id: nextId++,
           title: form.title || 'Без названия',
-          author: form.author || 'Неизвестно',
-          status: form.status || 'DRAFT',
-          updatedAt: new Date().toISOString().split('T')[0],
+          author: 'Неизвестно',
+          status: 'DRAFT',
+          updatedAt: formatted,
           content: form.content || '',
         };
 
         data.items.unshift(newDoc);
 
         return of(new HttpResponse({ status: 201, body: newDoc }));
+      }),
+    );
+  }
+
+  if (req.url.match(/\/documents\/\d+$/) && req.method === 'PUT') {
+    const form = req.body as Partial<DocumentDto>;
+
+    return from(loadDocuments()).pipe(
+      switchMap((data) => {
+        const id = Number(req.url.split('/').pop());
+        const index = data.items.findIndex((d) => d.id === id);
+
+        if (index === -1) {
+          return throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 404,
+                error: { message: 'Document not found' },
+              }),
+          );
+        }
+
+        const updated = {
+          ...data.items[index],
+          ...form,
+          updatedAt: new Date().toISOString().split('T')[0], // обновляем дату
+        };
+
+        data.items[index] = updated;
+
+        return of(new HttpResponse({ status: 200, body: updated }));
       }),
     );
   }

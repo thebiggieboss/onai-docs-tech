@@ -24,4 +24,8 @@ export class DocumentsHttpService {
   createDocument(form: ICreateProps): Observable<DocumentDto> {
     return this.http.post<DocumentDto>('/documents', form);
   }
+
+  updateDocument(id: number, form: ICreateProps) {
+    return this.http.put<DocumentDto>(`/documents/${id}`, form);
+  }
 }
