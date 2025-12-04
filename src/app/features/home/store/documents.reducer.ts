@@ -8,6 +8,7 @@ import {
   loadDocumentSuccess,
 } from '@features/home/store/documents.actions';
 import { DocumentState } from '@features/home/interfaces/home.interface';
+import { createDocumentSuccess } from '@features/home/store/create.actions';
 
 export const initialState: DocumentState = {
   list: {
@@ -68,5 +69,14 @@ export const documentsReducer = createReducer(
   on(loadDocumentFailure, (state, { error }) => ({
     ...state,
     detail: { ...state.detail, loading: false, error },
+  })),
+
+  on(createDocumentSuccess, (state, { document }) => ({
+    ...state,
+    list: {
+      ...state.list,
+      items: [document, ...state.list.items],
+      total: state.list.total + 1,
+    },
   })),
 );

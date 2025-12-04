@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DocumentDto } from '@shared/dto/document-dto.interface';
 import { DocumentResponse } from '@features/home/interfaces/home.interface';
+import { ICreateProps } from '@features/home/interfaces/create.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -18,5 +19,9 @@ export class DocumentsHttpService {
 
   getDocumentById(id: number): Observable<DocumentDto> {
     return this.http.get<DocumentDto>(`/documents/${id}`);
+  }
+
+  createDocument(form: ICreateProps): Observable<DocumentDto> {
+    return this.http.post<DocumentDto>('/documents', form);
   }
 }

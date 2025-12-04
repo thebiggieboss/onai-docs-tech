@@ -13,6 +13,7 @@ import { selectDocumentList, selectDocumentTotal } from '@features/home/store/do
 import { AsyncPipe } from '@angular/common';
 import { loadDocuments } from '@features/home/store/documents.actions';
 import { ITablePagination } from '@features/home/interfaces/home.interface';
+import { createDocument } from '@features/home/store/create.actions';
 
 @Component({
   selector: 'app-home',
@@ -63,7 +64,10 @@ export class Home implements OnInit {
     this.isCreateModal = false;
   }
 
-  onCreate(form: ICreateProps): void {}
+  onCreate(form: ICreateProps): void {
+    this.store.dispatch(createDocument({ form }));
+    this.closeCreateModal();
+  }
 
   loadData(): void {
     this.store.dispatch(

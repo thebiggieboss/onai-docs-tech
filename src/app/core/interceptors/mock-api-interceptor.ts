@@ -2,12 +2,16 @@ import { HttpInterceptorFn, HttpResponse, HttpErrorResponse } from '@angular/com
 import { ILogin, ILoginResponse } from '@app/shared/interfaces/auth-http.interface';
 import { from, of, switchMap, throwError } from 'rxjs';
 import { DocumentResponse } from '@features/home/interfaces/home.interface';
+import { DocumentDto } from '@shared/dto/document-dto.interface';
 
 let mockDocuments: DocumentResponse | null = null;
+let nextId = 1;
+
 const loadDocuments = async () => {
   if (!mockDocuments) {
     const response = await fetch('/assets/mock/documents.json');
     mockDocuments = await response.json();
+    nextId = mockDocuments.items.length + 1;
   }
   return mockDocuments;
 };
@@ -24,7 +28,6 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
       return of(new HttpResponse({ status: 200, body }));
     }
 
-    // корректный HttpErrorResponse
     return throwError(
       () =>
         new HttpErrorResponse({
@@ -92,6 +95,27 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
         }
 
         return of(new HttpResponse({ status: 200, body: doc }));
+      }),
+    );
+  }
+
+  if (req.url.endsWith('/documents') && req.method === 'POST') {
+    const form = req.body as Partial<DocumentDto>;
+
+    return from(loadDocuments()).pipe(
+      switchMap((data) => {
+        const newDoc: DocumentDto = {
+          id: nextId++,
+          title: form.title || 'Без названия',
+          author: form.author || 'Неизвестно',
+          status: form.status || 'DRAFT',
+          updatedAt: new Date().toISOString().split('T')[0],
+          content: form.content || '',
+        };
+
+        data.items.unshift(newDoc);
+
+        return of(new HttpResponse({ status: 201, body: newDoc }));
       }),
     );
   }

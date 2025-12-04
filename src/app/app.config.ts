@@ -18,6 +18,7 @@ import { AuthEffects } from '@features/login/store/auth.effects';
 import { mockApiInterceptor } from '@core/interceptors/mock-api-interceptor';
 import { documentsReducer } from '@features/home/store/documents.reducer';
 import { DocumentsEffects } from '@features/home/store/documents.effects';
+import { CreateDocumentEffects } from '@features/home/store/create.effects';
 
 registerLocaleData(en);
 
@@ -33,6 +34,6 @@ export const appConfig: ApplicationConfig = {
       auth: authReducer,
       documents: documentsReducer,
     }),
-    provideEffects([AuthEffects, DocumentsEffects]),
+    provideEffects([AuthEffects, DocumentsEffects, CreateDocumentEffects]),
   ],
 };
