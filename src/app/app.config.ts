@@ -16,6 +16,8 @@ import { provideEffects } from '@ngrx/effects';
 import { authReducer } from '@features/login/store/auth.reducer';
 import { AuthEffects } from '@features/login/store/auth.effects';
 import { mockApiInterceptor } from '@core/interceptors/mock-api-interceptor';
+import { documentsReducer } from '@features/home/store/documents.reducer';
+import { DocumentsEffects } from '@features/home/store/documents.effects';
 
 registerLocaleData(en);
 
@@ -26,12 +28,11 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideNzI18n(en_US),
     provideAnimationsAsync(),
-    provideHttpClient(
-      withInterceptors([mockApiInterceptor])
-    ),
+    provideHttpClient(withInterceptors([mockApiInterceptor])),
     provideStore({
-      auth: authReducer
+      auth: authReducer,
+      documents: documentsReducer,
     }),
-    provideEffects([AuthEffects])
-],
+    provideEffects([AuthEffects, DocumentsEffects]),
+  ],
 };

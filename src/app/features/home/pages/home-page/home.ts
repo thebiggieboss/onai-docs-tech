@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MainLayout } from '@app/layouts/main-layout/main-layout';
 import { DocumentDto } from '@shared/dto/document-dto.interface';
 import { Table } from '@features/home/components/table/table';
@@ -8,6 +8,11 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFlexModule } from 'ng-zorro-antd/flex';
 import { CreateModal } from '@features/home/components/create-modal/create-modal';
 import { ICreateProps } from '@features/home/interfaces/create.interface';
+import { Store } from '@ngrx/store';
+import { selectDocumentList, selectDocumentTotal } from '@features/home/store/documents.selectors';
+import { AsyncPipe } from '@angular/common';
+import { loadDocuments } from '@features/home/store/documents.actions';
+import { ITablePagination } from '@features/home/interfaces/home.interface';
 
 @Component({
   selector: 'app-home',
@@ -15,11 +20,11 @@ import { ICreateProps } from '@features/home/interfaces/create.interface';
     MainLayout,
     Table,
     NzInputModule,
-    NzInputWrapperComponent,
     FormsModule,
     NzButtonModule,
     NzFlexModule,
     CreateModal,
+    AsyncPipe,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -27,29 +32,27 @@ import { ICreateProps } from '@features/home/interfaces/create.interface';
 export class Home implements OnInit {
   dataSet: DocumentDto[] = [];
 
-  pageIndex = 0;
+  pageIndex = 1;
   pageSize = 10;
   tableLoading = false;
 
-  readonly value = signal('');
+  readonly searchValue = signal('');
 
   isCreateModal: boolean = false;
 
+  store = inject(Store);
+
+  documents$ = this.store.select(selectDocumentList);
+  tableTotal$ = this.store.select(selectDocumentTotal);
+
   ngOnInit(): void {
-    this.dataSet = [
-      {
-        id: 1,
-        title: 'СНО',
-        author: 'Гитлер',
-        status: 'DRAFT',
-        updatedAt: '2025-12-04',
-        content: 'Аренда помещения',
-      },
-    ];
+    this.loadData();
   }
 
-  onSearch(event: NzInputSearchEvent): void {
-    console.log(event);
+  onSearch(value: string): void {
+    this.searchValue.set(value);
+    this.pageIndex = 1;
+    this.loadData();
   }
 
   showCreateModal(): void {
@@ -61,4 +64,20 @@ export class Home implements OnInit {
   }
 
   onCreate(form: ICreateProps): void {}
+
+  loadData(): void {
+    this.store.dispatch(
+      loadDocuments({
+        search: this.searchValue(),
+        page: this.pageIndex,
+        pageSize: this.pageSize,
+      }),
+    );
+  }
+
+  onPageSizeChange(value: ITablePagination): void {
+    this.pageSize = value.pageSize;
+    this.pageIndex = value.pageIndex;
+    this.loadData();
+  }
 }

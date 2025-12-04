@@ -1,9 +1,18 @@
 import { HttpInterceptorFn, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { ILogin, ILoginResponse } from '@app/shared/interfaces/auth-http.interface';
-import { of, throwError } from 'rxjs';
+import { from, of, switchMap, throwError } from 'rxjs';
+import { DocumentResponse } from '@features/home/interfaces/home.interface';
+
+let mockDocuments: DocumentResponse | null = null;
+const loadDocuments = async () => {
+  if (!mockDocuments) {
+    const response = await fetch('/assets/mock/documents.json');
+    mockDocuments = await response.json();
+  }
+  return mockDocuments;
+};
 
 export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
-  // Фейковый логин
   if (req.url.endsWith('/auth/login') && req.method === 'POST') {
     const { username, password } = req.body as ILogin;
 
@@ -16,13 +25,76 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
     }
 
     // корректный HttpErrorResponse
-    return throwError(() => new HttpErrorResponse({
-      status: 401,
-      statusText: 'Unauthorized',
-      error: { message: 'Invalid credentials' }
-    }));
+    return throwError(
+      () =>
+        new HttpErrorResponse({
+          status: 401,
+          statusText: 'Unauthorized',
+          error: { message: 'Invalid credentials' },
+        }),
+    );
   }
 
-  // Для всех остальных запросов
+  if (
+    req.url.startsWith('/documents') &&
+    req.method === 'GET' &&
+    !req.url.match(/\/documents\/\d+$/)
+  ) {
+    return from(loadDocuments()).pipe(
+      switchMap((data) => {
+        const docs = data.items; // массив документов
+
+        const params = req.params;
+        const search = params.get('search') ?? '';
+        const page = Number(params.get('page') ?? 1);
+        const pageSize = Number(params.get('pageSize') ?? 10);
+
+        let filtered = docs;
+
+        if (search.trim()) {
+          filtered = filtered.filter((doc) =>
+            doc.title.toLowerCase().includes(search.toLowerCase()),
+          );
+        }
+
+        const start = (page - 1) * pageSize;
+        const items = filtered.slice(start, start + pageSize);
+
+        return of(
+          new HttpResponse({
+            status: 200,
+            body: {
+              items,
+              total: filtered.length,
+            },
+          }),
+        );
+      }),
+    );
+  }
+
+  if (req.url.match(/\/documents\/\d+$/) && req.method === 'GET') {
+    return from(loadDocuments()).pipe(
+      switchMap((data) => {
+        const docs = data.items;
+
+        const id = Number(req.url.split('/').pop());
+        const doc = docs.find((d) => d.id === id);
+
+        if (!doc) {
+          return throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 404,
+                error: { message: 'Document not found' },
+              }),
+          );
+        }
+
+        return of(new HttpResponse({ status: 200, body: doc }));
+      }),
+    );
+  }
+
   return next(req);
 };

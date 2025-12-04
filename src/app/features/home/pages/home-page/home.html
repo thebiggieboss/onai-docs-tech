@@ -2,8 +2,8 @@
   <div nz-flex nzVertical="true" nzGap="middle">
     <div nz-flex nzJustify="space-between">
       <div class="item-flex">
-        <nz-input-search nzAllowClear (nzSearch)="onSearch($event)">
-          <input nz-input [(ngModel)]="value" placeholder="Поиск" />
+        <nz-input-search nzAllowClear >
+          <input nz-input [(ngModel)]="searchValue" placeholder="Поиск" (ngModelChange)="onSearch($event)"/>
         </nz-input-search>
       </div>
 
@@ -14,7 +14,14 @@
       </div>
     </div>
 
-    <app-table [dataSet]="dataSet" [loading]="tableLoading" [pageSize]="pageSize" [pageIndex]="pageIndex"></app-table>
+
+    <app-table
+      [dataSet]="documents$ | async"
+      [loading]="tableLoading"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [total]="tableTotal$ | async"
+      (onPagination)="onPageSizeChange($event)"></app-table>
   </div>
 
 

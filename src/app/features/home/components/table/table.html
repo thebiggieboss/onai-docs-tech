@@ -1,11 +1,15 @@
-<ng-template [ngIf]="!!data.length">
-  <nz-table #basicTable
-            [nzData]="data" [nzFrontPagination]="false"
-            [nzLoading]="loading()"
-            [nzTotal]="total"
-            [nzPageSize]="pageSize()"
-            [nzPageIndex]="pageIndex()"
-            (nzQueryParams)="onQueryParamsChange($event)">
+<ng-template [ngIf]="!!data && !!data.length">
+  <nz-table
+    #basicTable
+    nzShowSizeChanger
+    [nzData]="dataSet()"
+    [nzFrontPagination]="false"
+    [nzLoading]="loading()"
+    [nzTotal]="total()"
+    [nzPageSize]="pageSize()"
+    [nzPageIndex]="pageIndex()"
+    (nzQueryParams)="onQueryParamsChange($event)"
+  >
     <thead class="ant-table-thead ng-star-inserted">
     <tr class="ant-table-row ng-star-inserted">
       <th class="ant-table-cell">Название</th>
