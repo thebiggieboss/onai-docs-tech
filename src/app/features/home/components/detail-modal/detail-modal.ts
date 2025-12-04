@@ -6,6 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './detail-modal.html',
   styleUrl: './detail-modal.scss',
 })
-export class DetailModal {
-
-}
+export class DetailModal {}

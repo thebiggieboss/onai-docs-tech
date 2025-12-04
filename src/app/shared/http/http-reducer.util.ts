@@ -6,14 +6,14 @@ export function createHttpReducer<T>(actions: { load: any; success: any; failure
     on(actions.load, (state: HttpState<T>) => ({
       ...state,
       loading: true,
-      error: null,
+      error: null as string | null,
     })),
 
     on(actions.success, (state: HttpState<T>, { entity }) => ({
       ...state,
       loading: false,
       entity,
-      error: null,
+      error: null as string | null,
     })),
 
     on(actions.failure, (state: HttpState<T>, { error }) => ({

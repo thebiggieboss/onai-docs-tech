@@ -2,6 +2,7 @@ import { Component, forwardRef, inject, input, OnInit, output } from '@angular/c
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import {
   ControlValueAccessor,
+  FormBuilder,
   NG_VALUE_ACCESSOR,
   NonNullableFormBuilder,
   ReactiveFormsModule,
@@ -41,7 +42,7 @@ import { DocumentDto } from '@shared/dto/document-dto.interface';
 })
 export class CreateModal implements ControlValueAccessor, OnInit {
   fillData = input<DocumentDto>(null);
-  private fb = inject(NonNullableFormBuilder);
+  private fb = inject(FormBuilder);
   private destroy$ = new Subject<void>();
 
   _value: boolean;
