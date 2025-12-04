@@ -1,59 +1,62 @@
 # OnaiDocs
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.0.
+Это приложение для работы с документами.
 
-## Development server
+Можно:
+- Смотреть список документов.
+- Искать документы по названию.
+- Создавать новый документ.
+- Редактировать существующий документ.
+- Данные хранятся в NgRx store.
+- Используется mock API через HttpInterceptor.
 
-To start a local development server, run:
+## Как запустить
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+1. Установить зависимости:
 
 ```bash
-ng generate component component-name
+npm install
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
+
+2. Запустить проект:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+Проект будет доступен по адресу http://localhost:4200
 
-To build the project run:
-
+Для запуска тестов:
 ```bash
-ng build
+npm run test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Логин
 
-## Running unit tests
+Для входа используйте:
+````
+username: admin
+password: 123456
+````
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
 
-```bash
-ng test
-```
+## Как работает
 
-## Running end-to-end tests
+- Список документов: GET /documents
+- Детали документа: GET /documents/:id
+- Создать документ: POST /documents
+- Обновить документ: PUT /documents/:id
 
-For end-to-end (e2e) testing, run:
+## NgRx
 
-```bash
-ng e2e
-```
+- Хранится список и детальная информация о документах.
+- Можно сбросить состояние полностью или частично через `resetDocumentsState`.
+- Создание и обновление документа делается через NgRx actions и effects.
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Форма документа
 
-## Additional Resources
+- Поля: `title`, `content`, `type`, `datePicker`
+- Для редактирования дата автоматически конвертируется в Date объект.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
